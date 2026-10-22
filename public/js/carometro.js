@@ -117,6 +117,22 @@ const Carometro = {
       selectFiltroTurma.value = codigoTurma;
     }
 
+    // Atualizar visibilidade de botões de gestão da turma ativa
+    const podeTurmas = typeof Auth !== 'undefined' && Auth.podeGerenciarTurmas();
+    const ehTurmaEspecifica = codigoTurma && codigoTurma.toUpperCase() !== 'TODAS';
+
+    const btnEvoluir = document.getElementById('btn-carometro-evoluir-turma');
+    if (btnEvoluir) {
+      btnEvoluir.style.display = (podeTurmas && ehTurmaEspecifica) ? 'inline-block' : 'none';
+      btnEvoluir.title = `Evoluir módulo da turma ${codigoTurma} (mantendo alunos e avaliações)`;
+    }
+
+    const btnExcluir = document.getElementById('btn-carometro-excluir-turma');
+    if (btnExcluir) {
+      btnExcluir.style.display = (podeTurmas && ehTurmaEspecifica) ? 'inline-block' : 'none';
+      btnExcluir.title = `Excluir a turma ${codigoTurma}`;
+    }
+
     await this.carregarAlunos();
   },
 

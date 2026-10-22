@@ -87,4 +87,35 @@ router.put('/:codigo', autenticarToken, (req, res) => {
   }
 });
 
+// Excluir turma
+router.delete('/:codigo', autenticarToken, (req, res) => {
+  const pode = req.usuario.perfil === 'master' || req.usuario.permissoes?.pode_gerenciar_turmas;
+  if (!pode) {
+    return res.status(403).json({ erro: 'Seu perfil não possui permissão para excluir turmas.' });
+  }
+
+  try {
+    const excluirAlunos = req.query.excluirAlunos === 'true' || req.body?.excluirAlunos === true;
+    const resultado = db.excluirTurma(req.params.codigo, excluirAlunos);
+    res.json(resultado);
+  } catch (e) {
+    res.status(400).json({ erro: e.message });
+  }
+});
+
+// Evoluir turma (Progressão de módulo/semestre com migração de alunos e histórico mantido)
+router.post('/:codigo/evoluir', autenticarToken, (req, res) => {
+  const pode = req.usuario.perfil === 'master' || req.usuario.permissoes?.pode_gerenciar_turmas;
+  if (!pode) {
+    return res.status(403).json({ erro: 'Seu perfil não possui permissão para evoluir turmas.' });
+  }
+
+  try {
+    const resultado = db.evoluirTurma(req.params.codigo, req.body);
+    res.json(resultado);
+  } catch (e) {
+    res.status(400).json({ erro: e.message });
+  }
+});
+
 module.exports = router;

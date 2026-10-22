@@ -33,6 +33,7 @@ const AdminUsuarios = {
     try {
       const res = await API.get('/usuarios/turmas-disponiveis');
       this.turmasDisponiveis = res.turmas || [];
+      this.renderizarTabelaTurmas();
     } catch (e) {
       console.error('Erro ao carregar turmas:', e);
     }
@@ -368,6 +369,194 @@ const AdminUsuarios = {
 
     } catch (e) {
       alert('Erro ao cadastrar turma: ' + e.message);
+    }
+  },
+
+  renderizarTabelaTurmas() {
+    const tbody = document.getElementById('tabela-admin-turmas-corpo');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+    const turmas = this.turmasDisponiveis || [];
+
+    if (turmas.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #94a3b8; padding: 16px;">Nenhuma turma encontrada.</td></tr>';
+      return;
+    }
+
+    turmas.forEach(t => {
+      const tr = document.createElement('tr');
+
+      // Buscar total de alunos dessa turma
+      const totalAlunos = (Carometro.turmas || []).find(ct => ct.codigo === t.codigo)?.total_alunos || '-';
+
+      tr.innerHTML = `
+        <td><strong style="color: #0284c7;">${t.codigo}</strong></td>
+        <td>${t.nome || '-'}</td>
+        <td>${t.modulo || '1º Módulo'}</td>
+        <td>${t.periodo || 'Manhã'}</td>
+        <td>${t.ano_semestre || '2026/1'}</td>
+        <td><span class="badge-status-ativo">${totalAlunos}</span></td>
+        <td style="text-align: right; white-space: nowrap;">
+          <button type="button" class="btn-senai-topo" onclick="AdminUsuarios.abrirModalEvoluirTurma('${t.codigo}')" style="background: #0284c7; color: white; border: none; font-size: 11px; padding: 3px 8px; margin-right: 4px;" title="Evoluir módulo da turma mantendo alunos">
+            🚀 Evoluir
+          </button>
+          <button type="button" class="btn-senai-topo" onclick="AdminUsuarios.excluirTurmaAtual('${t.codigo}')" style="background: #fee2e2; color: #b91c1c; border: 1px solid #f87171; font-size: 11px; padding: 3px 8px;" title="Excluir turma">
+            🗑️ Excluir
+          </button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+  },
+
+  // Sugestor inteligente de novo código de turma (ex: 1PMG -> 2PMG, DEV1N -> DEV2N, SEDUC2-DEVALD -> SEDUC3-DEVALD)
+  sugerirNovoCodigoTurma(codAtual) {
+    if (!codAtual) return '';
+    const limpo = codAtual.trim().toUpperCase();
+
+    // Começa com número: ex 1PMG -> 2PMG
+    const matchComeco = limpo.match(/^(\d+)(.*)$/);
+    if (matchComeco) {
+      const proxNum = parseInt(matchComeco[1], 10) + 1;
+      return `${proxNum}${matchComeco[2]}`;
+    }
+
+    // Número no meio ou final: ex DEV1N -> DEV2N, SEDUC2-DEVALD -> SEDUC3-DEVALD
+    const matchMeio = limpo.match(/^(.*?)(\d+)(.*?)$/);
+    if (matchMeio) {
+      const proxNum = parseInt(matchMeio[2], 10) + 1;
+      return `${matchMeio[1]}${proxNum}${matchMeio[3]}`;
+    }
+
+    return `${limpo}-2`;
+  },
+
+  sugerirNovoModulo(moduloAtual) {
+    if (!moduloAtual) return '2º Módulo';
+    const match = moduloAtual.match(/(\d+)/);
+    if (match) {
+      const prox = parseInt(match[1], 10) + 1;
+      return moduloAtual.replace(match[1], prox);
+    }
+    return '2º Módulo';
+  },
+
+  async abrirModalEvoluirTurma(codigoTurma) {
+    if (!Auth.podeGerenciarTurmas()) {
+      alert('Seu perfil não possui permissão para evoluir turmas.');
+      return;
+    }
+
+    const cod = (codigoTurma || Carometro.turmaAtiva || '').trim().toUpperCase();
+    if (!cod || cod === 'TODAS') {
+      alert('Por favor, selecione uma turma específica para evoluir.');
+      return;
+    }
+
+    const overlay = document.getElementById('modal-evoluir-turma');
+    if (!overlay) return;
+
+    // Buscar informações da turma e quantidade de alunos
+    let turma = (Carometro.turmas || []).find(t => t.codigo === cod) ||
+                (this.turmasDisponiveis || []).find(t => t.codigo === cod) ||
+                { codigo: cod, nome: 'Técnico SENAI', modulo: '1º Módulo', ano_semestre: '2026/1' };
+
+    let totalAlunos = 0;
+    try {
+      const resAlunos = await API.get(`/turmas/${encodeURIComponent(cod)}/alunos`);
+      totalAlunos = resAlunos.total_alunos || (resAlunos.alunos ? resAlunos.alunos.length : 0);
+    } catch (e) {
+      totalAlunos = 0;
+    }
+
+    // Preencher campos do modal
+    document.getElementById('evoluir-turma-codigo-origem').value = cod;
+    document.getElementById('evoluir-turma-total-alunos').value = `${totalAlunos} aluno(s) serão promovidos (histórico mantido)`;
+    document.getElementById('evoluir-turma-novo-codigo').value = this.sugerirNovoCodigoTurma(cod);
+    document.getElementById('evoluir-turma-nome').value = turma.nome || 'Técnico SENAI';
+    document.getElementById('evoluir-turma-modulo').value = this.sugerirNovoModulo(turma.modulo);
+    document.getElementById('evoluir-turma-ano').value = '2026/2';
+    document.getElementById('evoluir-turma-atualizar-permissoes').checked = true;
+
+    overlay.classList.add('ativo');
+  },
+
+  fecharModalEvoluirTurma() {
+    const overlay = document.getElementById('modal-evoluir-turma');
+    if (overlay) overlay.classList.remove('ativo');
+  },
+
+  async salvarEvolucaoTurma() {
+    const codOrigem = document.getElementById('evoluir-turma-codigo-origem').value.trim().toUpperCase();
+    const novo_codigo = document.getElementById('evoluir-turma-novo-codigo').value.trim().toUpperCase();
+    const novo_nome = document.getElementById('evoluir-turma-nome').value.trim();
+    const novo_modulo = document.getElementById('evoluir-turma-modulo').value.trim();
+    const novo_ano_semestre = document.getElementById('evoluir-turma-ano').value.trim();
+    const atualizar_permissoes = document.getElementById('evoluir-turma-atualizar-permissoes').checked;
+
+    if (!novo_codigo) {
+      alert('Por favor, informe o novo código da turma.');
+      return;
+    }
+
+    try {
+      const res = await API.post(`/turmas/${encodeURIComponent(codOrigem)}/evoluir`, {
+        novo_codigo,
+        novo_nome,
+        novo_modulo,
+        novo_ano_semestre,
+        atualizar_permissoes
+      });
+
+      alert(res.mensagem || 'Turma evoluída com sucesso!');
+      this.fecharModalEvoluirTurma();
+
+      // Recarregar turmas no carômetro e posicionar na nova turma
+      await Carometro.carregarTurmas();
+      await Carometro.selecionarTurma(novo_codigo);
+
+      // Atualizar lista no painel admin
+      await this.carregarTurmasDisponiveis();
+      await this.carregarUsuarios();
+
+    } catch (e) {
+      alert('Erro ao evoluir turma: ' + e.message);
+    }
+  },
+
+  async excluirTurmaAtual(codigoTurma) {
+    if (!Auth.podeGerenciarTurmas()) {
+      alert('Seu perfil não possui permissão para excluir turmas.');
+      return;
+    }
+
+    const cod = (codigoTurma || Carometro.turmaAtiva || '').trim().toUpperCase();
+    if (!cod || cod === 'TODAS') {
+      alert('Não é possível excluir a visualização de todas as turmas.');
+      return;
+    }
+
+    const confirmou = confirm(
+      `⚠️ Tem certeza de que deseja excluir a turma "${cod}"?\n\n` +
+      `Todos os alunos vinculados a esta turma e seus registros de ocorrências também serão removidos do sistema.\n\n` +
+      `Esta ação não pode ser desfeita.`
+    );
+
+    if (!confirmou) return;
+
+    try {
+      const res = await API.delete(`/turmas/${encodeURIComponent(cod)}?excluirAlunos=true`);
+      alert(res.mensagem || `Turma ${cod} excluída com sucesso.`);
+
+      // Recarregar turmas no carômetro
+      await Carometro.carregarTurmas();
+      await this.carregarTurmasDisponiveis();
+      await this.carregarUsuarios();
+
+    } catch (e) {
+      alert('Erro ao excluir turma: ' + e.message);
     }
   },
 

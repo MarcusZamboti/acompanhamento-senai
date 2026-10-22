@@ -186,6 +186,96 @@ class BancoDeDados {
     return atual;
   }
 
+  excluirTurma(codigo, excluirAlunos = true) {
+    const codLimpo = (codigo || '').trim().toUpperCase();
+    const idx = this.dados.turmas.findIndex(t => t.codigo.toUpperCase() === codLimpo);
+    if (idx === -1) throw new Error(`Turma "${codLimpo}" não encontrada.`);
+
+    const alunosDaTurma = this.dados.alunos.filter(a => a.turma_codigo.toUpperCase() === codLimpo);
+
+    if (alunosDaTurma.length > 0 && !excluirAlunos) {
+      throw new Error(`A turma ${codLimpo} possui ${alunosDaTurma.length} aluno(s). Confirme a exclusão dos alunos para prosseguir.`);
+    }
+
+    // Se houver alunos e foi confirmado, remover alunos e ocorrências associadas
+    let totalAlunosRemovidos = 0;
+    if (alunosDaTurma.length > 0) {
+      const idsAlunos = alunosDaTurma.map(a => a.id);
+      this.dados.alunos = this.dados.alunos.filter(a => !idsAlunos.includes(a.id));
+      this.dados.ocorrencias = this.dados.ocorrencias.filter(o => !idsAlunos.includes(o.aluno_id));
+      totalAlunosRemovidos = idsAlunos.length;
+    }
+
+    // Remover a turma
+    const [turmaRemovida] = this.dados.turmas.splice(idx, 1);
+
+    // Limpar das permissões dos usuários (caso não seja '*')
+    this.dados.usuarios.forEach(u => {
+      if (u.permissoes?.turmas_permitidas && Array.isArray(u.permissoes.turmas_permitidas)) {
+        u.permissoes.turmas_permitidas = u.permissoes.turmas_permitidas.filter(c => c.toUpperCase() !== codLimpo);
+      }
+    });
+
+    this.salvar();
+    return {
+      turma: turmaRemovida,
+      alunos_removidos: totalAlunosRemovidos,
+      mensagem: `Turma ${codLimpo} excluída com sucesso.${totalAlunosRemovidos > 0 ? ` (${totalAlunosRemovidos} alunos removidos)` : ''}`
+    };
+  }
+
+  evoluirTurma(codigoAtual, { novo_codigo, novo_modulo, novo_ano_semestre, novo_nome, atualizar_permissoes = true }) {
+    const codAtualLimpo = (codigoAtual || '').trim().toUpperCase();
+    const novoCodLimpo = (novo_codigo || '').trim().toUpperCase();
+
+    if (!novoCodLimpo) throw new Error('O novo código da turma é obrigatório.');
+
+    const idx = this.dados.turmas.findIndex(t => t.codigo.toUpperCase() === codAtualLimpo);
+    if (idx === -1) throw new Error(`Turma de origem "${codAtualLimpo}" não encontrada.`);
+
+    // Se o código mudou, verificar se o novo código já existe
+    if (novoCodLimpo !== codAtualLimpo) {
+      const jaExiste = this.dados.turmas.some(t => t.codigo.toUpperCase() === novoCodLimpo);
+      if (jaExiste) throw new Error(`Já existe uma turma cadastrada com o código "${novoCodLimpo}".`);
+    }
+
+    const turma = this.dados.turmas[idx];
+    turma.codigo = novoCodLimpo;
+    if (novo_nome && novo_nome.trim()) turma.nome = novo_nome.trim();
+    if (novo_modulo && novo_modulo.trim()) turma.modulo = novo_modulo.trim();
+    if (novo_ano_semestre && novo_ano_semestre.trim()) turma.ano_semestre = novo_ano_semestre.trim();
+
+    // MIGRAR ALUNOS E PRESERVAR TODAS AS OCORRÊNCIAS / AVALIAÇÕES / FOTOS
+    let totalAlunosMigrados = 0;
+    this.dados.alunos.forEach(aluno => {
+      if (aluno.turma_codigo.toUpperCase() === codAtualLimpo) {
+        aluno.turma_codigo = novoCodLimpo;
+        totalAlunosMigrados++;
+      }
+    });
+
+    // Atualizar permissões de turmas dos usuários (se tinham o código antigo)
+    if (atualizar_permissoes) {
+      this.dados.usuarios.forEach(u => {
+        if (u.permissoes?.turmas_permitidas && Array.isArray(u.permissoes.turmas_permitidas)) {
+          const idxPerm = u.permissoes.turmas_permitidas.findIndex(c => c.toUpperCase() === codAtualLimpo);
+          if (idxPerm !== -1) {
+            u.permissoes.turmas_permitidas[idxPerm] = novoCodLimpo;
+          }
+        }
+      });
+    }
+
+    this.salvar();
+
+    return {
+      turma_anterior: codAtualLimpo,
+      turma_atualizada: turma,
+      total_alunos_migrados: totalAlunosMigrados,
+      mensagem: `Turma evoluída de ${codAtualLimpo} para ${novoCodLimpo} com sucesso! ${totalAlunosMigrados} aluno(s) e todos os seus históricos foram mantidos.`
+    };
+  }
+
   // --- MÉTODOS DE ALUNOS COM CONTADORES DERIVADOS ---
   calcularIdade(dataNasc) {
     if (!dataNasc) return { anos: 17, texto: '17 anos' };
@@ -443,6 +533,96 @@ class BancoDeDados {
 
     this.salvar();
     return atual;
+  }
+
+  excluirTurma(codigo, excluirAlunos = true) {
+    const codLimpo = (codigo || '').trim().toUpperCase();
+    const idx = this.dados.turmas.findIndex(t => t.codigo.toUpperCase() === codLimpo);
+    if (idx === -1) throw new Error(`Turma "${codLimpo}" não encontrada.`);
+
+    const alunosDaTurma = this.dados.alunos.filter(a => a.turma_codigo.toUpperCase() === codLimpo);
+
+    if (alunosDaTurma.length > 0 && !excluirAlunos) {
+      throw new Error(`A turma ${codLimpo} possui ${alunosDaTurma.length} aluno(s). Confirme a exclusão dos alunos para prosseguir.`);
+    }
+
+    // Se houver alunos e foi confirmado, remover alunos e ocorrências associadas
+    let totalAlunosRemovidos = 0;
+    if (alunosDaTurma.length > 0) {
+      const idsAlunos = alunosDaTurma.map(a => a.id);
+      this.dados.alunos = this.dados.alunos.filter(a => !idsAlunos.includes(a.id));
+      this.dados.ocorrencias = this.dados.ocorrencias.filter(o => !idsAlunos.includes(o.aluno_id));
+      totalAlunosRemovidos = idsAlunos.length;
+    }
+
+    // Remover a turma
+    const [turmaRemovida] = this.dados.turmas.splice(idx, 1);
+
+    // Limpar das permissões dos usuários (caso não seja '*')
+    this.dados.usuarios.forEach(u => {
+      if (u.permissoes?.turmas_permitidas && Array.isArray(u.permissoes.turmas_permitidas)) {
+        u.permissoes.turmas_permitidas = u.permissoes.turmas_permitidas.filter(c => c.toUpperCase() !== codLimpo);
+      }
+    });
+
+    this.salvar();
+    return {
+      turma: turmaRemovida,
+      alunos_removidos: totalAlunosRemovidos,
+      mensagem: `Turma ${codLimpo} excluída com sucesso.${totalAlunosRemovidos > 0 ? ` (${totalAlunosRemovidos} alunos removidos)` : ''}`
+    };
+  }
+
+  evoluirTurma(codigoAtual, { novo_codigo, novo_modulo, novo_ano_semestre, novo_nome, atualizar_permissoes = true }) {
+    const codAtualLimpo = (codigoAtual || '').trim().toUpperCase();
+    const novoCodLimpo = (novo_codigo || '').trim().toUpperCase();
+
+    if (!novoCodLimpo) throw new Error('O novo código da turma é obrigatório.');
+
+    const idx = this.dados.turmas.findIndex(t => t.codigo.toUpperCase() === codAtualLimpo);
+    if (idx === -1) throw new Error(`Turma de origem "${codAtualLimpo}" não encontrada.`);
+
+    // Se o código mudou, verificar se o novo código já existe
+    if (novoCodLimpo !== codAtualLimpo) {
+      const jaExiste = this.dados.turmas.some(t => t.codigo.toUpperCase() === novoCodLimpo);
+      if (jaExiste) throw new Error(`Já existe uma turma cadastrada com o código "${novoCodLimpo}".`);
+    }
+
+    const turma = this.dados.turmas[idx];
+    turma.codigo = novoCodLimpo;
+    if (novo_nome && novo_nome.trim()) turma.nome = novo_nome.trim();
+    if (novo_modulo && novo_modulo.trim()) turma.modulo = novo_modulo.trim();
+    if (novo_ano_semestre && novo_ano_semestre.trim()) turma.ano_semestre = novo_ano_semestre.trim();
+
+    // MIGRAR ALUNOS E PRESERVAR TODAS AS OCORRÊNCIAS / AVALIAÇÕES / FOTOS
+    let totalAlunosMigrados = 0;
+    this.dados.alunos.forEach(aluno => {
+      if (aluno.turma_codigo.toUpperCase() === codAtualLimpo) {
+        aluno.turma_codigo = novoCodLimpo;
+        totalAlunosMigrados++;
+      }
+    });
+
+    // Atualizar permissões de turmas dos usuários (se tinham o código antigo)
+    if (atualizar_permissoes) {
+      this.dados.usuarios.forEach(u => {
+        if (u.permissoes?.turmas_permitidas && Array.isArray(u.permissoes.turmas_permitidas)) {
+          const idxPerm = u.permissoes.turmas_permitidas.findIndex(c => c.toUpperCase() === codAtualLimpo);
+          if (idxPerm !== -1) {
+            u.permissoes.turmas_permitidas[idxPerm] = novoCodLimpo;
+          }
+        }
+      });
+    }
+
+    this.salvar();
+
+    return {
+      turma_anterior: codAtualLimpo,
+      turma_atualizada: turma,
+      total_alunos_migrados: totalAlunosMigrados,
+      mensagem: `Turma evoluída de ${codAtualLimpo} para ${novoCodLimpo} com sucesso! ${totalAlunosMigrados} aluno(s) e todos os seus históricos foram mantidos.`
+    };
   }
 
   // --- MÉTODOS DE OCORRÊNCIAS ---

@@ -216,7 +216,13 @@
         <!-- Botões gerados via Carometro.carregarTurmas() -->
       </nav>
 
-      <div style="display: flex; gap: 6px; align-items: center;">
+      <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+        <button id="btn-carometro-evoluir-turma" class="btn-senai-topo" onclick="AdminUsuarios.abrirModalEvoluirTurma(Carometro.turmaAtiva)" title="Evoluir módulo da turma atual mantendo todos os alunos e avaliações" style="display: none; background: #0284c7; color: white; border: none; font-weight: bold;">
+          🚀 Evoluir Turma
+        </button>
+        <button id="btn-carometro-excluir-turma" class="btn-senai-topo" onclick="AdminUsuarios.excluirTurmaAtual(Carometro.turmaAtiva)" title="Excluir a turma atual" style="display: none; background: #fee2e2; color: #b91c1c; border: 1px solid #f87171;">
+          🗑️ Excluir Turma
+        </button>
         <button id="btn-carometro-nova-turma" class="btn-senai-topo" onclick="AdminUsuarios.abrirModalNovaTurma()" title="Criar uma nova turma no sistema" style="display: none;">
           ➕ Nova Turma
         </button>
@@ -806,6 +812,36 @@
           </div>
         </div>
 
+        <!-- Seção de Gestão de Turmas Cadastradas (Evoluir / Excluir) -->
+        <div style="margin-top: 24px; border-top: 2px solid #cbd5e1; padding-top: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+              <h3 style="font-size: 14px; color: #0f172a; font-weight: bold;">🏫 Turmas Ativas no Sistema</h3>
+              <p style="font-size: 11px; color: #64748b; margin-top: 2px;">
+                Evolua módulos e semestres (ex: 1PMG ➔ 2PMG) preservando alunos e ocorrências, ou exclua turmas obsoletas.
+              </p>
+            </div>
+            <button class="btn-senai-topo" onclick="AdminUsuarios.abrirModalNovaTurma()">➕ Nova Turma</button>
+          </div>
+
+          <table class="tabela-admin-usuarios">
+            <thead>
+              <tr>
+                <th>Código da Turma</th>
+                <th>Curso / Habilitação</th>
+                <th>Módulo / Semestre</th>
+                <th>Período</th>
+                <th>Ano Letivo</th>
+                <th>Alunos</th>
+                <th style="text-align: right;">Ações de Gestão</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-admin-turmas-corpo">
+              <!-- Preenchido via AdminUsuarios.renderizarTabelaTurmas() -->
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
   </div>
@@ -861,6 +897,73 @@
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
           <button type="button" class="btn-senai-topo" onclick="AdminUsuarios.fecharModalNovaTurma()">Cancelar</button>
           <button type="button" class="btn-senai-topo btn-master-destaque" onclick="AdminUsuarios.salvarNovaTurma()">Salvar Turma</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================
+       MODAL 5.1: EVOLUIR TURMA (Progressão de Módulo / Semestre)
+       ====================================================================== -->
+  <div class="modal-overlay" id="modal-evoluir-turma">
+    <div class="modal-janela" style="max-width: 650px;">
+      <div class="admin-header">
+        <h2>🚀 Evoluir Turma (Progressão de Módulo / Semestre)</h2>
+        <button class="btn-fechar-modal" onclick="AdminUsuarios.fecharModalEvoluirTurma()">✕</button>
+      </div>
+      <div style="padding: 20px; background: #ffffff;">
+
+        <div style="background: #f0f9ff; border: 1.5px solid #0284c7; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; font-size: 12px; color: #0369a1; line-height: 1.5;">
+          <strong>ℹ️ Como funciona a Evolução de Turma:</strong><br>
+          A turma avança de módulo/semestre (por exemplo: de <strong>1PMG</strong> para <strong>2PMG</strong>).
+          Todos os alunos cadastrados, suas fotos, histórico disciplinar completo e contadores circulares são <strong>preservados intactos</strong> e migrados automaticamente para a nova turma.
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-grupo-campo">
+            <label>Turma Atual de Origem:</label>
+            <input type="text" id="evoluir-turma-codigo-origem" readonly style="background: #f1f5f9; font-weight: bold; color: #1e3a8a;">
+          </div>
+          <div class="form-grupo-campo">
+            <label>Alunos que Serão Promovidos:</label>
+            <input type="text" id="evoluir-turma-total-alunos" readonly style="background: #f1f5f9; color: #166534; font-weight: bold;">
+          </div>
+        </div>
+
+        <div class="form-grupo-campo">
+          <label for="evoluir-turma-novo-codigo">Novo Código da Turma * (ex: 2PMG, DEV3N, etc.):</label>
+          <input type="text" id="evoluir-turma-novo-codigo" placeholder="ex: 2PMG" style="text-transform: uppercase; font-weight: bold;">
+        </div>
+
+        <div class="form-grupo-campo">
+          <label for="evoluir-turma-nome">Nome do Curso / Habilitação:</label>
+          <input type="text" id="evoluir-turma-nome" placeholder="ex: Técnico em Processos Gráficos">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-grupo-campo">
+            <label for="evoluir-turma-modulo">Novo Módulo / Semestre:</label>
+            <input type="text" id="evoluir-turma-modulo" placeholder="ex: 2º Módulo">
+          </div>
+          <div class="form-grupo-campo">
+            <label for="evoluir-turma-ano">Novo Ano / Semestre Letivo:</label>
+            <input type="text" id="evoluir-turma-ano" placeholder="ex: 2026/2">
+          </div>
+        </div>
+
+        <div style="margin-top: 10px; margin-bottom: 14px;">
+          <label class="item-checkbox" style="font-size: 12px; color: #334155; font-weight: 500;">
+            <input type="checkbox" id="evoluir-turma-atualizar-permissoes" checked>
+            Atualizar automaticamente as permissões dos professores para o novo código de turma
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+          <button type="button" class="btn-senai-topo" onclick="AdminUsuarios.fecharModalEvoluirTurma()">Cancelar</button>
+          <button type="button" class="btn-senai-topo btn-master-destaque" onclick="AdminUsuarios.salvarEvolucaoTurma()" style="background: #16a34a; border-color: #15803d;">
+            🚀 Confirmar Promoção da Turma
+          </button>
         </div>
       </div>
     </div>
