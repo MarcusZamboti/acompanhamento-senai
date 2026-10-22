@@ -1,12 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const config = require('./config');
+const supabase = require('./supabase');
 
 class BancoDeDados {
   constructor() {
     this.caminho = config.CAMINHO_BANCO;
     this.dados = null;
     this.carregar();
+    this.inicializarSupabase();
   }
 
   carregar() {
@@ -22,6 +24,19 @@ class BancoDeDados {
     }
   }
 
+  async inicializarSupabase() {
+    if (supabase.habilitado) {
+      try {
+        const dadosRemotos = await supabase.carregarDadosIniciais(this.dados);
+        if (dadosRemotos) {
+          this.dados = dadosRemotos;
+        }
+      } catch (e) {
+        console.warn('[Supabase] Usando dados locais como contingência:', e.message);
+      }
+    }
+  }
+
   salvar() {
     try {
       const conteudo = JSON.stringify(this.dados, null, 2);
@@ -29,6 +44,13 @@ class BancoDeDados {
       const tempPath = `${this.caminho}.tmp`;
       fs.writeFileSync(tempPath, conteudo, 'utf-8');
       fs.renameSync(tempPath, this.caminho);
+
+      // Persistência assíncrona imediata no Supabase / PostgreSQL
+      if (supabase.habilitado) {
+        supabase.salvarDados(this.dados).catch(err => {
+          console.error('[Supabase] Erro ao sincronizar com nuvem:', err.message);
+        });
+      }
     } catch (erro) {
       console.error('Erro ao persistir banco de dados JSON:', erro);
       throw erro;
