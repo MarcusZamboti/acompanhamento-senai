@@ -13,6 +13,26 @@ router.get('/', autenticarToken, (req, res) => {
   });
 });
 
+// Listar professores cadastrados disponíveis para atribuição a turmas
+router.get('/professores-disponiveis', autenticarToken, (req, res) => {
+  try {
+    const professores = db.obterTodosUsuarios()
+      .filter(u => u.ativo)
+      .map(u => ({
+        id: u.id,
+        login: u.login,
+        nome: u.nome,
+        cargo: u.cargo || u.perfil,
+        perfil: u.perfil,
+        turmas_permitidas: u.permissoes?.turmas_permitidas || []
+      }));
+
+    res.json({ professores });
+  } catch (e) {
+    res.status(500).json({ erro: e.message });
+  }
+});
+
 // Carômetro: Alunos da turma com fotos, nomes e contadores derivados dinamicamente
 router.get('/:codigo/alunos', autenticarToken, verificarAcessoTurma, (req, res) => {
   const codigo = req.params.codigo;

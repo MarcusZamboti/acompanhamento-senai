@@ -149,7 +149,7 @@ class BancoDeDados {
     return this.dados.turmas.find(t => t.codigo.toUpperCase() === codigo.toUpperCase()) || null;
   }
 
-  criarTurma({ codigo, nome, modulo, periodo, ano_semestre, sala }) {
+  criarTurma({ codigo, nome, modulo, periodo, ano_semestre, sala, professores_ids = [] }) {
     const codLimpo = (codigo || '').trim().toUpperCase();
     if (!codLimpo) throw new Error('Código da turma é obrigatório.');
 
@@ -167,6 +167,22 @@ class BancoDeDados {
     };
 
     this.dados.turmas.push(novaTurma);
+
+    // Atribuir a turma imediatamente aos professores selecionados
+    if (Array.isArray(professores_ids) && professores_ids.length > 0) {
+      this.dados.usuarios.forEach(u => {
+        if (professores_ids.includes(u.id) || professores_ids.includes(u.login)) {
+          if (!u.permissoes) u.permissoes = {};
+          if (!Array.isArray(u.permissoes.turmas_permitidas)) {
+            u.permissoes.turmas_permitidas = [];
+          }
+          if (!u.permissoes.turmas_permitidas.includes('*') && !u.permissoes.turmas_permitidas.includes(codLimpo)) {
+            u.permissoes.turmas_permitidas.push(codLimpo);
+          }
+        }
+      });
+    }
+
     this.salvar();
     return novaTurma;
   }

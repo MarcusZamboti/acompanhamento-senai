@@ -312,7 +312,7 @@ const AdminUsuarios = {
   // ========================================================================
   // GESTÃO DE TURMAS (Criação de novas turmas)
   // ========================================================================
-  abrirModalNovaTurma() {
+  async abrirModalNovaTurma() {
     if (!Auth.podeGerenciarTurmas()) {
       alert('Seu perfil não possui permissão para criar turmas.');
       return;
@@ -328,7 +328,69 @@ const AdminUsuarios = {
     document.getElementById('turma-form-ano').value = '2026/1';
     document.getElementById('turma-form-sala').value = 'Laboratório de Impressão';
 
+    // Carregar lista de professores para atribuição com checkboxes
+    await this.carregarProfessoresParaTurma();
+
     overlay.classList.add('ativo');
+  },
+
+  async carregarProfessoresParaTurma(turmaCodigo = '') {
+    const container = document.getElementById('grade-checkboxes-professores-turma');
+    if (!container) return;
+
+    container.innerHTML = '<div style="color: #64748b; font-size: 11px;">Carregando docentes...</div>';
+
+    try {
+      const res = await API.get('/turmas/professores-disponiveis');
+      const professores = res.professores || [];
+      container.innerHTML = '';
+
+      if (professores.length === 0) {
+        container.innerHTML = '<div style="color: #94a3b8; font-size: 11px;">Nenhum docente cadastrado no sistema.</div>';
+        return;
+      }
+
+      professores.forEach(p => {
+        const ehMasterOuTotal = p.turmas_permitidas?.includes('*') || p.perfil === 'master';
+        const jaTemTurma = turmaCodigo && p.turmas_permitidas?.includes(turmaCodigo.toUpperCase());
+
+        const label = document.createElement('label');
+        label.className = 'item-checkbox';
+        label.style.display = 'flex';
+        label.style.alignItems = 'center';
+        label.style.gap = '6px';
+        label.style.fontSize = '12px';
+        label.style.marginBottom = '4px';
+
+        const chk = document.createElement('input');
+        chk.type = 'checkbox';
+        chk.className = 'chk-prof-turma';
+        chk.value = p.id;
+
+        if (ehMasterOuTotal) {
+          chk.checked = true;
+          chk.disabled = true;
+          label.title = 'Este usuário possui permissão global para todas as turmas (*)';
+        } else if (jaTemTurma) {
+          chk.checked = true;
+        }
+
+        const badgeCargo = p.perfil === 'master' ? '👑 Master' : (p.cargo || p.perfil);
+        label.appendChild(chk);
+        label.appendChild(document.createTextNode(` ${p.nome} `));
+
+        const spanCargo = document.createElement('span');
+        spanCargo.style.fontSize = '10px';
+        spanCargo.style.color = '#64748b';
+        spanCargo.textContent = `(${badgeCargo}${ehMasterOuTotal ? ' - Acesso Total' : ''})`;
+        label.appendChild(spanCargo);
+
+        container.appendChild(label);
+      });
+
+    } catch (e) {
+      container.innerHTML = '<div style="color: #ef4444; font-size: 11px;">Erro ao carregar lista de professores.</div>';
+    }
   },
 
   fecharModalNovaTurma() {
@@ -349,6 +411,14 @@ const AdminUsuarios = {
       return;
     }
 
+    // Coletar professores selecionados para atribuição imediata
+    const professores_ids = [];
+    document.querySelectorAll('.chk-prof-turma:checked').forEach(c => {
+      if (!c.disabled) {
+        professores_ids.push(c.value);
+      }
+    });
+
     try {
       const res = await API.post('/turmas', {
         codigo,
@@ -356,7 +426,8 @@ const AdminUsuarios = {
         modulo,
         periodo,
         ano_semestre,
-        sala
+        sala,
+        professores_ids
       });
 
       alert(res.mensagem);
@@ -366,6 +437,7 @@ const AdminUsuarios = {
       await Carometro.carregarTurmas();
       Carometro.selecionarTurma(codigo);
       await this.carregarTurmasDisponiveis();
+      await this.carregarUsuarios();
 
     } catch (e) {
       alert('Erro ao cadastrar turma: ' + e.message);

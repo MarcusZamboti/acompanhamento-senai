@@ -120,15 +120,6 @@
       "sala": "Oficina Elétrica"
     },
     {
-      "id": "turma_graf1m_1792691953722",
-      "codigo": "GRAF1M",
-      "nome": "Técnico em Processos Gráficos",
-      "modulo": "1º Módulo",
-      "periodo": "Manhã",
-      "ano_semestre": "2026/1",
-      "sala": "Oficina Tipográfica"
-    },
-    {
       "id": "turma_teste_1792697992441",
       "codigo": "TESTE",
       "nome": "Técnico em Processos Gráficos",
@@ -675,22 +666,6 @@
       "rg": "53.998.112-9",
       "cpf": "410.228.441-39",
       "empresa_aprendizagem": "Eurofarma SP",
-      "contribuicoes_aapm": "Sim"
-    },
-    {
-      "id": "aluno_1792691953736_9ust",
-      "turma_codigo": "GRAF1M",
-      "matricula": "25199999",
-      "nome": "LUCAS GRAFICA MOOCA",
-      "foto_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
-      "data_nascimento": "2008-04-10",
-      "data_matricula": "02/02/2026",
-      "genero": "Masculino",
-      "curso": "Técnico em Processos Gráficos",
-      "nivel": "Nível Técnico",
-      "rg": "",
-      "cpf": "",
-      "empresa_aprendizagem": "",
       "contribuicoes_aapm": "Sim"
     },
     {
