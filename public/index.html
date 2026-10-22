@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acompanhamento Escolar - SENAI Theobaldo De Nigris</title>
+  
+  <!-- Estilos Oficiais e Componentes -->
+  <link rel="stylesheet" href="/css/senai-tema.css">
+  <link rel="stylesheet" href="/css/carometro.css">
+  <link rel="stylesheet" href="/css/modais.css">
+</head>
+<body>
+
+  <!-- Marca d'água de fundo (Fachada Escola SENAI) -->
+  <div class="fundo-escola-watermark"></div>
+
+  <!-- ======================================================================
+       TELA INICIAL DE LOGIN OFICIAL - SENAI THEOBALDO DE NIGRIS
+       ====================================================================== -->
+  <div id="tela-login-inicial" class="tela-login-wrapper" style="display: none;">
+    <div class="card-login-senai">
+      
+      <div class="login-topo-marca">
+        <div class="logo-senai-box" style="margin-bottom: 8px;">
+          <div class="senai-texto" style="font-size: 26px; padding: 4px 14px;">SENAI</div>
+          <div class="senai-cidade" style="font-size: 11px;">Theobaldo De Nigris</div>
+        </div>
+        <h1 class="login-titulo-sistema">Acompanhamento Escolar & Gestão Educacional</h1>
+        <p class="login-subtitulo-unidade">Escola SENAI CFP 1.14 - Mooca / São Paulo - SP</p>
+      </div>
+
+      <!-- Alerta de Erro -->
+      <div id="login-alerta-erro" class="login-alerta-erro" style="display: none;">
+        <span class="alerta-icone">⚠️</span>
+        <span id="login-mensagem-erro">Usuário ou senha inválidos.</span>
+      </div>
+
+      <!-- Formulário de Login -->
+      <form id="form-login-sistema" onsubmit="event.preventDefault(); Auth.submeterFormularioLogin();">
+        <div class="form-grupo-campo">
+          <label for="login-input-usuario">Login de Acesso / Usuário *</label>
+          <div class="input-grupo-com-icone">
+            <span class="input-icone-esquerda" title="Usuário">👤</span>
+            <div class="input-campo-envolucro">
+              <input type="text" id="login-input-usuario" placeholder="Digite seu login (ex: master)" required autofocus autocomplete="username">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grupo-campo">
+          <label for="login-input-senha">Senha de Acesso *</label>
+          <div class="input-grupo-com-icone">
+            <span class="input-icone-esquerda" title="Senha">🔑</span>
+            <div class="input-campo-envolucro com-toggle">
+              <input type="password" id="login-input-senha" placeholder="Digite sua senha" required autocomplete="current-password">
+              <button type="button" class="btn-toggle-senha" onclick="Auth.alternarVisibilidadeSenha()" title="Mostrar/ocultar senha">👁️</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 11px; color: #475569;">
+          <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+            <input type="checkbox" id="chk-lembrar-login" checked> Lembrar acesso
+          </label>
+          <span style="color: #64748b;">Senha padrão demo: <strong>senha123</strong></span>
+        </div>
+
+        <button type="submit" id="btn-login-entrar" class="btn-login-submit">
+          🚀 Acessar Sistema
+        </button>
+      </form>
+
+      <!-- Divisor -->
+      <div class="login-divisor">
+        <span>OU ACESSE RAPIDAMENTE UM PERFIL DE TESTE</span>
+      </div>
+
+      <!-- Perfis Demo para Acesso em 1 Clique -->
+      <div class="grade-perfis-demo">
+        <button type="button" class="card-demo-opcao" onclick="Auth.preencherELogar('master', 'senha123')">
+          <div class="demo-avatar">👑</div>
+          <div class="demo-info">
+            <strong>Master (Márcio Silva)</strong>
+            <span>Admin Geral • Controle Total</span>
+          </div>
+        </button>
+
+        <button type="button" class="card-demo-opcao" onclick="Auth.preencherELogar('cristina', 'senha123')">
+          <div class="demo-avatar">👩‍🏫</div>
+          <div class="demo-info">
+            <strong>Coord. Cristina Santos</strong>
+            <span>Coordenação & Todas as Turmas</span>
+          </div>
+        </button>
+
+        <button type="button" class="card-demo-opcao" onclick="Auth.preencherELogar('rodrigo', 'senha123')">
+          <div class="demo-avatar">👨‍💻</div>
+          <div class="demo-info">
+            <strong>Prof. Rodrigo Azevedo</strong>
+            <span>Docente SEDUC2-DEVALD & DEV2N</span>
+          </div>
+        </button>
+
+        <button type="button" class="card-demo-opcao" onclick="Auth.preencherELogar('carlos', 'senha123')">
+          <div class="demo-avatar">👨‍🏫</div>
+          <div class="demo-info">
+            <strong>Prof. Carlos Mendes</strong>
+            <span>Docente DEV2N • Somente Elogios</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="login-rodape">
+        <span>Serviço Nacional de Aprendizagem Industrial - SENAI-SP (CFP 1.14)</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Barra de Demonstração e Troca Rápida de Perfis (Facilidade de testes) -->
+  <div class="barra-demo-topo" id="barra-demo-topo" style="display: none;">
+    <div class="demo-titulo">
+      <span>🛡️ Painel RBAC & Troca Rápida de Perfis</span>
+    </div>
+    <div class="demo-seletor">
+      <label for="select-usuario-demo">Simular Usuário:</label>
+      <select id="select-usuario-demo" title="Alterne instantaneamente o perfil para testar diferentes permissões de turmas e ocorrências">
+        <!-- Preenchido dinamicamente via auth.js -->
+      </select>
+      <button type="button" class="btn-senai-topo" onclick="Auth.logout()" style="background: #ef4444; color: white; border: none; margin-left: 8px; font-size: 11px; padding: 2px 8px;" title="Retornar à tela de login">
+        🚪 Tela de Login
+      </button>
+    </div>
+  </div>
+
+  <div class="container-sistema" id="container-sistema" style="display: none;">
+
+    <!-- Cabeçalho Principal SENAI Theobaldo De Nigris -->
+    <header class="cabecalho-principal">
+      <div class="logo-senai-box">
+        <div class="senai-texto">SENAI</div>
+        <div class="senai-cidade">Theobaldo De Nigris</div>
+      </div>
+
+      <div class="titulo-sistema-3d">
+        Acompanhamento Escolar
+      </div>
+
+      <div class="usuario-topo-acoes">
+        <span class="saudacao">
+          Olá <strong id="usuario-nome-header">Carregando...</strong>
+          <span id="badge-perfil-header" class="badge-perfil-atual perfil-master">MASTER</span>
+        </span>
+
+        <!-- Botões administrativos contextuais -->
+        <button id="btn-abrir-admin" class="btn-senai-topo btn-master-destaque" title="Gerenciar usuários, turmas e permissões" style="display: none;">
+          ⚙️ Painel Master
+        </button>
+
+        <button id="btn-sair-sistema" class="btn-senai-topo">
+          Sair
+        </button>
+      </div>
+    </header>
+
+    <!-- Seção Consultar Alunos & Filtros -->
+    <section class="painel-consulta">
+      <div class="consulta-titulo">Consultar Alunos</div>
+      <div class="consulta-instrucao">
+        Preencha os campos abaixo para visualizar os Alunos por meio da pesquisa ou selecione a Turma por meio dos botões:
+      </div>
+
+      <div class="linha-filtros">
+        <div class="grupo-busca">
+          <label for="input-pesquisa-palavra">Pesquisar por</label>
+          <input type="text" id="input-pesquisa-palavra" placeholder="palavras-chave (nome, matrícula)">
+          
+          <label for="filtro-select-turma">em</label>
+          <select id="filtro-select-turma">
+            <!-- Opções de turmas -->
+          </select>
+
+          <button type="button" id="btn-executar-pesquisa" class="btn-pesquisar">Pesquisar</button>
+
+          <label class="chk-exclusivo">
+            <input type="checkbox" id="chk-busca-exclusiva"> Exclusivo
+            <span style="color: #0284c7; cursor: help;" title="Pesquisa pelo termo exato">ⓘ</span>
+          </label>
+        </div>
+
+        <div class="filtros-direita">
+          <div>
+            <label for="select-ordenacao">Ordenar por:</label>
+            <select id="select-ordenacao">
+              <option value="nome">Nome do Aluno (A-Z)</option>
+              <option value="ocorrencias_desc">Total de Ocorrências (Maior ➔ Menor)</option>
+              <option value="vermelho_desc">Mais Advertências / Orientações (🔴)</option>
+              <option value="verde_desc">Mais Elogios / Recomendações (🟢)</option>
+            </select>
+          </div>
+          <div>
+            Última atualização da Base de Dados em: <strong>22/10/2026</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-encontrados">
+        Foram encontrados <strong id="total-alunos-encontrados">0</strong> alunos ativos.
+      </div>
+    </section>
+
+    <!-- Barra de Navegação por Abas de Turmas & Ações Rápidas de Gestão -->
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+      <nav class="container-abas-turmas" id="container-abas-turmas" style="margin-bottom: 0; border-bottom: none; flex: 1;">
+        <!-- Botões gerados via Carometro.carregarTurmas() -->
+      </nav>
+
+      <div style="display: flex; gap: 6px; align-items: center;">
+        <button id="btn-carometro-nova-turma" class="btn-senai-topo" onclick="AdminUsuarios.abrirModalNovaTurma()" title="Criar uma nova turma no sistema" style="display: none;">
+          ➕ Nova Turma
+        </button>
+        <button id="btn-carometro-novo-aluno" class="btn-senai-topo btn-master-destaque" onclick="AdminUsuarios.abrirModalNovoAluno()" title="Adicionar aluno na turma com foto" style="display: none;">
+          👤+ Novo Aluno
+        </button>
+      </div>
+    </div>
+
+    <!-- Carômetro: Grade de Fotos com Indicadores Circulares Vermelho e Verde -->
+    <main>
+      <div class="grade-carometro" id="grade-carometro">
+        <!-- Cards gerados dinamicamente via Carometro.renderizarGrade() -->
+      </div>
+
+      <!-- Barra Separadora Azul e Navegação -->
+      <div class="barra-separadora-azul">
+        <span id="paginacao-faixa-texto">Lista de alunos</span>
+        <div class="paginacao-central" id="paginacao-links">
+          <!-- Links de página -->
+        </div>
+        <a class="link-proximos" onclick="Carometro.paginaAtual++; Carometro.renderizarGrade(); Carometro.atualizarBarraPaginacao();">
+          Próximos alunos desta turma &gt;&gt;&gt;
+        </a>
+      </div>
+
+      <!-- Informações para Uso do Sistema (Rodapé oficial) -->
+      <footer class="rodape-informacoes">
+        <div class="titulo-info">INFORMAÇÕES PARA USO DO SISTEMA</div>
+        <div class="rodape-grid">
+          <div class="col-esq">
+            <p>Melhor se visualizado em resolução mínima de 1024 x 768 ou zoom de 90% no seu navegador em caso de resolução menor.</p>
+            <p><strong>Passe o mouse sobre a foto do(a) aluno(a)</strong> para saber seu Nome, Idade, Turma e Nº de ocorrências.</p>
+            <p><strong>Clique na foto do aluno(a)</strong> para acessar sua ficha detalhada e registrar ocorrências.</p>
+          </div>
+          <div class="col-dir">
+            <p>Nos casos da ausência da foto, favor recorrer à Orientação Educacional para as providências.</p>
+            <p>É necessária permissão de gravação para a criação de ocorrências conforme seu perfil docente.</p>
+            <p class="aviso-vermelho-rodape">Este sistema opera com sincronização e derivação direta dos registros disciplinares.</p>
+          </div>
+        </div>
+        <div class="versao-centro">
+          Acompanhamento Escolar - Escola SENAI "Theobaldo De Nigris" (CFP 1.14 - Mooca - SP) &copy; 2026 | Versão 2.1
+        </div>
+      </footer>
+    </main>
+
+  </div>
+
+  <!-- Tooltip Flutuante do Carômetro -->
+  <div id="tooltip-aluno" class="tooltip-aluno-flutuante"></div>
+
+
+  <!-- ======================================================================
+       MODAL 1: FICHA DETALHADA DO ALUNO (Idêntico a image (2).png)
+       ====================================================================== -->
+  <div class="modal-overlay" id="modal-detalhes-aluno">
+    <div class="modal-janela">
+      <div class="ficha-aluno-container">
+        
+        <!-- Cabeçalho com foto e dados cadastrais -->
+        <div class="ficha-cabecalho-grid">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+            <div class="ficha-foto-box">
+              <img id="ficha-aluno-foto" src="" alt="Foto Aluno">
+            </div>
+            <button id="btn-alterar-foto-aluno" class="btn-trocar-foto-ficha" style="display: none;">
+              📸 Alterar Foto
+            </button>
+          </div>
+
+          <div class="ficha-dados-tabela">
+            <div class="campo-bloco">
+              <label>Nome</label>
+              <div class="campo-valor destaque-nome" id="ficha-nome">-</div>
+            </div>
+            <div class="campo-bloco">
+              <label>Idade</label>
+              <div class="campo-valor" id="ficha-idade">-</div>
+            </div>
+            <div class="campo-bloco">
+              <label>Gênero</label>
+              <div class="campo-valor" id="ficha-genero">-</div>
+            </div>
+            <div class="campo-bloco" style="align-items: flex-end; flex-direction: row; gap: 8px; justify-content: flex-end;">
+              <button id="btn-editar-cadastro-aluno" class="btn-senai-topo" style="display: none; background: #0284c7; color: #ffffff; border: none; font-weight: bold; padding: 4px 10px; font-size: 11px;">
+                ✏️ Editar Cadastro
+              </button>
+              <button class="btn-fechar-modal" onclick="ModalDetalhes.fechar()">Fechar</button>
+            </div>
+
+            <div class="campo-bloco">
+              <label>Empresa do contrato de Aprendizagem</label>
+              <div class="campo-valor" id="ficha-empresa">-</div>
+            </div>
+            <div class="campo-bloco">
+              <label>Nº de Matrícula</label>
+              <div class="campo-valor" id="ficha-matricula">-</div>
+            </div>
+            <div class="campo-bloco">
+              <label>Data de Matrícula</label>
+              <div class="campo-valor" id="ficha-data-matricula">-</div>
+            </div>
+            <div class="campo-bloco">
+              <label>Data de Nasc.</label>
+              <div class="campo-valor" id="ficha-data-nasc">-</div>
+            </div>
+
+            <div class="campo-bloco">
+              <label>Nível</label>
+              <div class="campo-valor" id="ficha-nivel">-</div>
+            </div>
+            <div class="campo-bloco">
+              <label>Curso</label>
+              <div class="campo-valor" id="ficha-curso">-</div>
+            </div>
+            <div class="campo-bloco">
+              <label>Data Início Realizada</label>
+              <div class="campo-valor" id="ficha-data-inicio">-</div>
+            </div>
+            <div class="campo-bloco">
+              <label>RG</label>
+              <div class="campo-valor" id="ficha-rg">-</div>
+            </div>
+
+            <div class="campo-bloco">
+              <label>Turma</label>
+              <div class="campo-valor" id="ficha-turma">-</div>
+            </div>
+            <div class="campo-bloco">
+              <label>CPF</label>
+              <div class="campo-valor" id="ficha-cpf">-</div>
+            </div>
+            <div class="campo-bloco" style="grid-column: span 2;">
+              <label>Contribuições AAPM</label>
+              <div class="campo-valor" id="ficha-aapm">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abas internas da ficha -->
+        <div class="abas-internas-ficha" id="container-subabas-aluno">
+          <button class="btn-subaba" data-aba="geral" onclick="ModalDetalhes.trocarSubaba('geral')">🔍 Geral</button>
+          <button class="btn-subaba" data-aba="tutores" onclick="ModalDetalhes.trocarSubaba('tutores')">🔍 Informações do(s) Tutor(es)</button>
+          <button class="btn-subaba" data-aba="emergencia" onclick="ModalDetalhes.trocarSubaba('emergencia')">🔍 Informações de Emergência</button>
+          <button class="btn-subaba ativa" data-aba="historico" onclick="ModalDetalhes.trocarSubaba('historico')">🔍 Histórico Disciplinar</button>
+          <button class="btn-subaba" data-aba="pessoal" onclick="ModalDetalhes.trocarSubaba('pessoal')">🔍 Informações de Caráter Pessoal</button>
+        </div>
+
+        <!-- CONTEÚDO 1: GERAL -->
+        <div class="conteudo-subaba-aluno" id="painel-subaba-geral">
+          <div class="subaba-bloco-secao">
+            <h3>🏫 Informações Acadêmicas e Matrícula</h3>
+            <div class="grade-info-detalhada">
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Situação Escolar</span>
+                <span class="valor-info" style="color: #166534; font-weight: bold;">● Regular / Ativa</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Unidade SENAI</span>
+                <span class="valor-info">Escola SENAI "Theobaldo De Nigris"</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Ano Letivo / Semestre</span>
+                <span class="valor-info" id="aba-geral-ano">2026 / 1º Semestre</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Carga Horária do Curso</span>
+                <span class="valor-info">1.200 horas</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Limite Máximo de Faltas</span>
+                <span class="valor-info">25% (Regimento Comum SENAI-SP)</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Orientadora Educacional (OE)</span>
+                <span class="valor-info">Alice Miranda (OE - CFP 1.14)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="subaba-bloco-secao">
+            <h3>🏢 Contrato de Aprendizagem & Empresa</h3>
+            <div class="grade-info-detalhada">
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Empresa Parceira</span>
+                <span class="valor-info" id="aba-geral-empresa">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Regime de Contratação</span>
+                <span class="valor-info" id="aba-geral-regime">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Supervisor na Empresa</span>
+                <span class="valor-info" id="aba-geral-supervisor">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Associação AAPM</span>
+                <span class="valor-info" id="aba-geral-aapm">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTEÚDO 2: INFORMAÇÕES DO(S) TUTOR(ES) -->
+        <div class="conteudo-subaba-aluno" id="painel-subaba-tutores">
+          <div class="subaba-bloco-secao">
+            <h3>👨‍👩‍👧 Responsável Legal Principal</h3>
+            <div class="grade-info-detalhada">
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Nome do Responsável</span>
+                <span class="valor-info" id="aba-tutor-nome">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Grau de Parentesco</span>
+                <span class="valor-info" id="aba-tutor-parentesco">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Telefone Celular / WhatsApp</span>
+                <span class="valor-info" id="aba-tutor-tel" style="font-weight: bold; color: #0284c7;">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Telefone Comercial / Recados</span>
+                <span class="valor-info" id="aba-tutor-tel-com">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">E-mail para Comunicação</span>
+                <span class="valor-info" id="aba-tutor-email">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="subaba-bloco-secao">
+            <h3>📍 Endereço Residencial Cadastrado</h3>
+            <div class="grade-info-detalhada">
+              <div class="item-info-detalhada" style="grid-column: span 2;">
+                <span class="rotulo-info">Logradouro e Número</span>
+                <span class="valor-info" id="aba-tutor-endereco">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Bairro</span>
+                <span class="valor-info" id="aba-tutor-bairro">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Cidade / UF</span>
+                <span class="valor-info" id="aba-tutor-cidade">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">CEP</span>
+                <span class="valor-info" id="aba-tutor-cep">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="subaba-bloco-secao">
+            <h3>🚪 Autorização de Saída Antecipada</h3>
+            <p style="font-size: 12px; color: #334155; line-height: 1.5; margin-bottom: 8px;">
+              Pessoas expressamente autorizadas pelos responsáveis legais a buscar o(a) aluno(a) ou autorizar saída por telefone/WhatsApp:
+            </p>
+            <div id="aba-tutor-saida" style="font-size: 12px; color: #1e293b; background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 4px; line-height: 1.6;">
+              -
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTEÚDO 3: INFORMAÇÕES DE EMERGÊNCIA -->
+        <div class="conteudo-subaba-aluno" id="painel-subaba-emergencia">
+          <div class="subaba-bloco-secao">
+            <h3>🚨 Contatos Rápidos de Emergência</h3>
+            <div class="grade-info-detalhada">
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Contato 1 (Prioridade)</span>
+                <span class="valor-info" id="aba-emerg-contato1" style="font-weight: bold; color: #b91c1c;">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Contato 2 (Alternativo)</span>
+                <span class="valor-info" id="aba-emerg-contato2">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Contato 3 (Trabalho / Empresa)</span>
+                <span class="valor-info" id="aba-emerg-contato3">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="subaba-bloco-secao">
+            <h3>🩺 Informações Médicas e de Saúde</h3>
+            <div class="grade-info-detalhada">
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Tipo Sanguíneo & Fator Rh</span>
+                <span class="valor-info" id="aba-emerg-sangue" style="font-weight: bold; color: #be123c;">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Plano de Saúde / Convênio</span>
+                <span class="valor-info" id="aba-emerg-convenio">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Hospital / UPA de Preferência</span>
+                <span class="valor-info" id="aba-emerg-hospital">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Alergias Conhecidas</span>
+                <span class="valor-info" id="aba-emerg-alergias" style="color: #b91c1c;">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Medicamentos de Uso Contínuo</span>
+                <span class="valor-info" id="aba-emerg-medicamentos">-</span>
+              </div>
+              <div class="item-info-detalhada">
+                <span class="rotulo-info">Observações Médicas / Restrições</span>
+                <span class="valor-info" id="aba-emerg-obs">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTEÚDO 4: HISTÓRICO DISCIPLINAR (Ativo por padrão) -->
+        <div class="conteudo-subaba-aluno ativa" id="painel-subaba-historico">
+          <div class="secao-historico-disciplinar">
+            <div class="titulo-contagem-ocorrencias" id="ficha-total-ocorrencias">
+              Foram encontradas 0 ocorrências disciplinares
+            </div>
+
+            <table class="tabela-ocorrencias">
+              <thead>
+                <tr>
+                  <th class="th-opcao">Opção</th>
+                  <th style="width: 170px;">Tipo de Ocorrência</th>
+                  <th style="width: 100px;">Data</th>
+                  <th>Detalhamento</th>
+                  <th style="width: 120px;">Feito por</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-ocorrencias-corpo">
+                <!-- Linhas preenchidas via ModalDetalhes.renderizarTabelaOcorrencias() -->
+              </tbody>
+            </table>
+
+            <!-- Botões de Ação na base -->
+            <div class="rodape-botoes-ficha">
+              <button id="btn-abrir-nova-ocorrencia" class="btn-acao-ficha btn-primario">
+                📝 Registrar Ocorrência Disciplinar
+              </button>
+              <button id="btn-imprimir-relatorio" class="btn-acao-ficha">
+                🖨️ Imprimir Relatório das Ocorrências
+              </button>
+              <button id="btn-imprimir-faltas" class="btn-acao-ficha">
+                🖨️ Imprimir Acompanhamento de Faltas
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTEÚDO 5: INFORMAÇÕES DE CARÁTER PESSOAL -->
+        <div class="conteudo-subaba-aluno" id="painel-subaba-pessoal">
+          <div class="subaba-bloco-secao">
+            <h3>👤 Perfil Socioeducacional e Habilidades</h3>
+            <div style="font-size: 12px; color: #1e293b; line-height: 1.6;">
+              <p style="margin-bottom: 8px;">
+                <strong>Perfil Comportamental:</strong> <span id="aba-pessoal-comportamento">-</span>
+              </p>
+              <p style="margin-bottom: 8px;">
+                <strong>Destaques Acadêmicos & Habilidades:</strong> <span id="aba-pessoal-destaques">-</span>
+              </p>
+              <p style="margin-bottom: 8px;">
+                <strong>Projetos Institucionais:</strong> <span id="aba-pessoal-projetos">-</span>
+              </p>
+              <p>
+                <strong>Observações da Coordenação:</strong> <span id="aba-pessoal-coordenacao">-</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================
+       MODAL 2: INCLUIR OCORRÊNCIA DISCIPLINAR (Idêntico a image (3).png)
+       ====================================================================== -->
+  <div class="modal-overlay" id="modal-inclusao-ocorrencia">
+    <div class="modal-janela form-ocorrencia-janela">
+      
+      <div class="form-ocorrencia-header">
+        <div class="logo-senai-box">
+          <div class="senai-texto" style="font-size: 20px; padding: 2px 10px;">SENAI</div>
+          <div class="senai-cidade" style="font-size: 9px;">Theobaldo De Nigris</div>
+        </div>
+
+        <div style="font-size: 12px; color: #334155;">
+          Data: <strong id="ocorrencia-data-topo">-</strong>
+        </div>
+
+        <div style="font-size: 12px; color: #334155;">
+          Responsável: <strong id="ocorrencia-responsavel-nome">-</strong>
+        </div>
+
+        <button class="btn-senai-topo" onclick="ModalOcorrencia.fechar()">
+          Voltar
+        </button>
+      </div>
+
+      <div class="form-ocorrencia-corpo">
+        <div class="instrucao-destaque">Incluir uma nova ocorrência disciplinar</div>
+        <div class="instrucao-sub">Preencha corretamente os dados abaixo:</div>
+
+        <div class="form-grupo-campo">
+          <label for="ocorrencia-select-tipo">Tipo de Ocorrência:</label>
+          <select id="ocorrencia-select-tipo">
+            <!-- Tipos carregados com validação de perfil -->
+          </select>
+        </div>
+
+        <div class="form-grupo-campo" style="max-width: 220px;">
+          <label for="ocorrencia-input-data">Data da Ocorrência:</label>
+          <input type="date" id="ocorrencia-input-data">
+        </div>
+
+        <div class="form-grupo-campo">
+          <label for="ocorrencia-detalhamento">Detalhamento do ocorrido:</label>
+          <textarea id="ocorrencia-detalhamento" placeholder="Descreva os fatos detalhadamente..."></textarea>
+        </div>
+
+        <div class="area-botoes-gravar">
+          <button type="button" id="btn-gravar-ocorrencia-submit" class="btn-gravar-ocorrencia" onclick="ModalOcorrencia.gravar()">
+            Gravar
+          </button>
+          <div class="aviso-clique-uma-vez">(Atenção - clique apenas uma vez)</div>
+        </div>
+
+        <div class="aviso-voltar-rodape">
+          Se chegou aqui sem propósito de gravar uma ocorrência, clique em <strong>Voltar</strong> no topo da página
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ======================================================================
+       MODAL 3: IMPRESSÃO DE RELATÓRIOS (Fiéis a image (4).png e (5).png)
+       ====================================================================== -->
+  <div class="modal-overlay" id="modal-relatorio-impressao">
+    <div class="modal-janela" style="max-width: 950px;">
+      <div style="background: #1e293b; color: white; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: bold; font-size: 13px;">Visualização para Impressão Oficial - SENAI Theobaldo De Nigris</span>
+        <div>
+          <button class="btn-senai-topo" onclick="Impressao.dispararImpressao()" style="background: #0284c7; color: white; border: none; font-weight: bold; margin-right: 8px;">
+            🖨️ Imprimir / Salvar PDF
+          </button>
+          <button class="btn-senai-topo" onclick="Impressao.fechar()">
+            Fechar
+          </button>
+        </div>
+      </div>
+      <div class="relatorio-imprimir-area" id="conteudo-impressao-relatorio">
+        <!-- Preenchido dinamicamente via Impressao.js -->
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================
+       MODAL 4: PAINEL DE ADMINISTRAÇÃO MASTER (Usuários e Permissões)
+       ====================================================================== -->
+  <div class="modal-overlay" id="modal-admin-usuarios">
+    <div class="modal-janela admin-janela">
+      
+      <div class="admin-header">
+        <h2>⚙️ Gestão de Usuários e Permissões de Acesso (Perfil Master)</h2>
+        <button class="btn-fechar-modal" onclick="AdminUsuarios.fechar()">✕ Fechar</button>
+      </div>
+
+      <div class="admin-corpo">
+        <div class="admin-barra-topo">
+          <p style="font-size: 13px; color: #475569;">
+            Gerencie os usuários escolares, atribua turmas permitidas e configure permissões de turmas, alunos e ocorrências.
+          </p>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-senai-topo" onclick="AdminUsuarios.abrirModalNovaTurma()">
+              🏫 Nova Turma
+            </button>
+            <button class="btn-senai-topo" onclick="AdminUsuarios.abrirModalNovoAluno()">
+              👤 Novo Aluno
+            </button>
+            <button class="btn-senai-topo btn-master-destaque" onclick="AdminUsuarios.iniciarCriacao()">
+              ➕ Novo Usuário
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabela de Usuários Cadastrados -->
+        <table class="tabela-admin-usuarios">
+          <thead>
+            <tr>
+              <th>Login</th>
+              <th>Nome Completo</th>
+              <th>Perfil</th>
+              <th>Status</th>
+              <th>Turmas Autorizadas</th>
+              <th>Permissões Globais</th>
+              <th style="text-align: right;">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-admin-usuarios-corpo">
+            <!-- Preenchido via AdminUsuarios.carregarUsuarios() -->
+          </tbody>
+        </table>
+
+        <!-- Painel / Formulário de Criação/Edição de Usuário -->
+        <div id="painel-form-usuario" class="secao-permissoes-box" style="display: none; background: #f1f5f9; border: 1.5px solid #0284c7;">
+          <h3 id="form-usuario-titulo" style="font-size: 14px; margin-bottom: 12px; color: #0f172a;">Novo Usuário</h3>
+          <input type="hidden" id="usr-form-id">
+
+          <div class="form-usuario-grid">
+            <div class="campo-bloco">
+              <label for="usr-form-login">Login de Acesso *</label>
+              <input type="text" id="usr-form-login" class="campo-valor" placeholder="ex: prof_silva">
+            </div>
+
+            <div class="campo-bloco">
+              <label for="usr-form-nome">Nome Completo *</label>
+              <input type="text" id="usr-form-nome" class="campo-valor" placeholder="ex: Prof. Fernando Silva">
+            </div>
+
+            <div class="campo-bloco">
+              <label for="usr-form-cargo">Cargo / Função</label>
+              <input type="text" id="usr-form-cargo" class="campo-valor" placeholder="ex: Docente Técnico">
+            </div>
+
+            <div class="campo-bloco">
+              <label for="usr-form-perfil">Perfil do Usuário</label>
+              <select id="usr-form-perfil" class="campo-valor">
+                <option value="professor">Professor</option>
+                <option value="coordenador">Coordenador</option>
+                <option value="orientador">Orientador Educacional</option>
+                <option value="master">Master (Administrador Geral)</option>
+              </select>
+            </div>
+
+            <div class="campo-bloco" style="grid-column: span 2;">
+              <label for="usr-form-senha">Senha de Acesso <span id="usr-form-senha-aviso" style="font-weight: normal; color: #64748b;"></span></label>
+              <input type="password" id="usr-form-senha" class="campo-valor" placeholder="Digite uma senha forte">
+            </div>
+          </div>
+
+          <!-- Permissões de Turmas -->
+          <div class="secao-permissoes-box" style="background: white;">
+            <h4>Controle de Turmas Permitidas:</h4>
+            <div style="margin-bottom: 8px;">
+              <label class="item-checkbox" style="font-weight: bold; color: #0284c7;">
+                <input type="checkbox" id="perm-todas-turmas"> Visualizar Todas as Turmas (*)
+              </label>
+            </div>
+            <div class="grade-checkboxes" id="grade-checkboxes-turmas">
+              <!-- Checkboxes das turmas cadastradas -->
+            </div>
+          </div>
+
+          <!-- Permissões de Ações e Ocorrências -->
+          <div class="secao-permissoes-box" style="background: white;">
+            <h4>Permissões Administrativas e Pedagógicas:</h4>
+            <div class="grade-checkboxes">
+              <label class="item-checkbox">
+                <input type="checkbox" id="perm-pode-gerenciar-turmas"> Pode <strong>Criar e Editar Turmas</strong>
+              </label>
+              <label class="item-checkbox">
+                <input type="checkbox" id="perm-pode-gerenciar-alunos"> Pode <strong>Cadastrar Alunos e Alterar Fotos</strong>
+              </label>
+              <label class="item-checkbox">
+                <input type="checkbox" id="perm-pode-verde"> Pode registrar <strong>Elogios / Recomendações (🟢 Verde)</strong>
+              </label>
+              <label class="item-checkbox">
+                <input type="checkbox" id="perm-pode-vermelho"> Pode registrar <strong>Advertências / Orientações (🔴 Vermelho)</strong>
+              </label>
+              <label class="item-checkbox">
+                <input type="checkbox" id="perm-pode-excluir"> Pode <strong>Excluir</strong> ocorrências cadastradas
+              </label>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px;">
+            <button type="button" class="btn-senai-topo" onclick="AdminUsuarios.fecharFormulario()">Cancelar</button>
+            <button type="button" class="btn-senai-topo btn-master-destaque" onclick="AdminUsuarios.salvarFormulario()">💾 Salvar Usuário e Permissões</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================
+       MODAL 5: CRIAR NOVA TURMA
+       ====================================================================== -->
+  <div class="modal-overlay" id="modal-criar-turma">
+    <div class="modal-janela" style="max-width: 600px;">
+      <div class="admin-header">
+        <h2>🏫 Cadastrar Nova Turma</h2>
+        <button class="btn-fechar-modal" onclick="AdminUsuarios.fecharModalNovaTurma()">✕</button>
+      </div>
+      <div style="padding: 20px; background: #ffffff;">
+        <div class="form-grupo-campo">
+          <label for="turma-form-codigo">Código da Turma * (ex: GRAF1M, DEV3N, T3A)</label>
+          <input type="text" id="turma-form-codigo" placeholder="ex: GRAF1M" style="text-transform: uppercase;">
+        </div>
+
+        <div class="form-grupo-campo">
+          <label for="turma-form-nome">Nome do Curso / Habilitação</label>
+          <input type="text" id="turma-form-nome" placeholder="ex: Técnico em Processos Gráficos">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-grupo-campo">
+            <label for="turma-form-modulo">Módulo / Semestre</label>
+            <input type="text" id="turma-form-modulo" placeholder="ex: 1º Módulo">
+          </div>
+          <div class="form-grupo-campo">
+            <label for="turma-form-periodo">Período</label>
+            <select id="turma-form-periodo">
+              <option value="Manhã">Manhã</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Noite">Noite</option>
+              <option value="Integral">Integral</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-grupo-campo">
+            <label for="turma-form-ano">Ano / Semestre</label>
+            <input type="text" id="turma-form-ano" value="2026/1">
+          </div>
+          <div class="form-grupo-campo">
+            <label for="turma-form-sala">Sala / Laboratório</label>
+            <input type="text" id="turma-form-sala" placeholder="ex: Lab Gráfica 02">
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+          <button type="button" class="btn-senai-topo" onclick="AdminUsuarios.fecharModalNovaTurma()">Cancelar</button>
+          <button type="button" class="btn-senai-topo btn-master-destaque" onclick="AdminUsuarios.salvarNovaTurma()">Salvar Turma</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================
+       MODAL 6: CADASTRO E EDIÇÃO COMPLETA DE ALUNO (Com Subabas e Upload de Foto)
+       ====================================================================== -->
+  <div class="modal-overlay" id="modal-criar-aluno">
+    <div class="modal-janela" style="max-width: 820px;">
+      <div class="admin-header">
+        <h2 id="modal-aluno-titulo">👤 Cadastrar Novo Aluno</h2>
+        <button class="btn-fechar-modal" onclick="AdminUsuarios.fecharModalNovoAluno()">✕</button>
+      </div>
+      <div style="padding: 20px; background: #ffffff;">
+
+        <!-- Campo Oculto para ID em caso de edição -->
+        <input type="hidden" id="aluno-form-id-edicao" value="">
+
+        <!-- Abas do Formulário do Aluno -->
+        <div class="abas-form-aluno" id="form-aluno-abas">
+          <button type="button" class="btn-form-aba ativa" data-formaba="escolar" onclick="AdminUsuarios.trocarAbaFormAluno('escolar')">
+            🎓 Dados Escolares & Foto
+          </button>
+          <button type="button" class="btn-form-aba" data-formaba="pais" onclick="AdminUsuarios.trocarAbaFormAluno('pais')">
+            👨‍👩‍👧 Pais / Tutores & Endereço
+          </button>
+          <button type="button" class="btn-form-aba" data-formaba="emergencia" onclick="AdminUsuarios.trocarAbaFormAluno('emergencia')">
+            🚨 Emergência & Saúde
+          </button>
+          <button type="button" class="btn-form-aba" data-formaba="pessoal" onclick="AdminUsuarios.trocarAbaFormAluno('pessoal')">
+            📝 Perfil & Observações
+          </button>
+        </div>
+
+        <!-- ==========================================
+             ABA 1: DADOS ESCOLARES E FOTO
+             ========================================== -->
+        <div class="painel-form-secao ativa" id="painel-form-aluno-escolar">
+          <!-- Área de Upload de Foto com Preview -->
+          <div class="area-upload-foto-container" style="margin-bottom: 14px;">
+            <div class="preview-foto-box">
+              <img id="preview-foto-novo-aluno" src="/assets/fotos/aluno_2.svg" alt="Pré-visualização">
+            </div>
+            <div class="upload-controles-box">
+              <label>Foto do Aluno (Carômetro):</label>
+              <input type="file" id="input-arquivo-foto-aluno" class="input-arquivo-foto" accept="image/*" onchange="AdminUsuarios.carregarPreviewFoto(this, 'preview-foto-novo-aluno')">
+              <span style="font-size: 11px; color: #64748b;">
+                Selecione uma foto do seu computador (JPG, PNG, WebP). Se não selecionar, um avatar padrão será mantido.
+              </span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+            <div class="form-grupo-campo">
+              <label for="aluno-form-turma">Turma de Destino *</label>
+              <select id="aluno-form-turma">
+                <!-- Opções preenchidas dinamicamente -->
+              </select>
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-matricula">Nº de Matrícula</label>
+              <input type="text" id="aluno-form-matricula" placeholder="ex: 25199882">
+            </div>
+          </div>
+
+          <div class="form-grupo-campo">
+            <label for="aluno-form-nome">Nome Completo do Aluno *</label>
+            <input type="text" id="aluno-form-nome" placeholder="ex: GABRIEL SANTOS COSTA" style="text-transform: uppercase;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
+            <div class="form-grupo-campo">
+              <label for="aluno-form-data-nasc">Data de Nascimento</label>
+              <input type="date" id="aluno-form-data-nasc" value="2008-05-15">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-genero">Gênero</label>
+              <select id="aluno-form-genero">
+                <option value="Masculino">Masculino</option>
+                <option value="Feminino">Feminino</option>
+                <option value="Não informado">Não informado</option>
+              </select>
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-rg">RG</label>
+              <input type="text" id="aluno-form-rg" placeholder="ex: 55.432.110-9">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-cpf">CPF</label>
+              <input type="text" id="aluno-form-cpf" placeholder="ex: 440.321.998-11">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+            <div class="form-grupo-campo">
+              <label for="aluno-form-curso">Curso</label>
+              <input type="text" id="aluno-form-curso" value="Técnico em Processos Gráficos">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-nivel">Nível do Curso</label>
+              <select id="aluno-form-nivel">
+                <option value="Nível Técnico">Nível Técnico</option>
+                <option value="Aprendizagem Industrial">Aprendizagem Industrial</option>
+                <option value="Qualificação Profissional">Qualificação Profissional</option>
+                <option value="Aperfeiçoamento">Aperfeiçoamento</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-grupo-campo">
+              <label for="aluno-form-empresa">Empresa de Aprendizagem</label>
+              <input type="text" id="aluno-form-empresa" placeholder="ex: Editora & Gráfica Abril SP">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-supervisor">Supervisor na Empresa</label>
+              <input type="text" id="aluno-form-supervisor" placeholder="ex: Eng. Roberto Camargo">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+            <div class="form-grupo-campo">
+              <label for="aluno-form-regime">Regime de Contratação</label>
+              <input type="text" id="aluno-form-regime" value="Jovem Aprendiz (Lei 10.097/2000)">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-aapm">Contribuição AAPM</label>
+              <select id="aluno-form-aapm">
+                <option value="Sim">Sim</option>
+                <option value="Não">Não</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             ABA 2: PAIS / TUTORES E ENDEREÇO
+             ========================================== -->
+        <div class="painel-form-secao" id="painel-form-aluno-pais">
+          <div style="font-size: 13px; font-weight: bold; color: #1e3a8a; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 10px;">
+            👨‍👩‍👧 Dados do(s) Responsável(is) Legal(is)
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+            <div class="form-grupo-campo">
+              <label for="aluno-form-resp-nome">Nome Completo do Responsável Legal *</label>
+              <input type="text" id="aluno-form-resp-nome" placeholder="ex: Alice Sousa Vieira">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-resp-parentesco">Grau de Parentesco</label>
+              <input type="text" id="aluno-form-resp-parentesco" placeholder="ex: Mãe / Tutora Legal">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 10px;">
+            <div class="form-grupo-campo">
+              <label for="aluno-form-resp-tel">Telefone Celular / WhatsApp *</label>
+              <input type="text" id="aluno-form-resp-tel" placeholder="ex: (11) 98765-4321">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-resp-tel-com">Telefone Comercial / Fixo</label>
+              <input type="text" id="aluno-form-resp-tel-com" placeholder="ex: (11) 3241-8890">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-resp-email">E-mail para Comunicação</label>
+              <input type="email" id="aluno-form-resp-email" placeholder="ex: responsavel@provedor.com.br">
+            </div>
+          </div>
+
+          <div style="font-size: 13px; font-weight: bold; color: #1e3a8a; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 4px; margin-top: 14px; margin-bottom: 10px;">
+            📍 Endereço Residencial
+          </div>
+
+          <div class="form-grupo-campo">
+            <label for="aluno-form-end-rua">Logradouro, Nº e Complemento</label>
+            <input type="text" id="aluno-form-end-rua" placeholder="ex: Rua da Mooca, 1420 - Bloco B, Apto 52">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+            <div class="form-grupo-campo">
+              <label for="aluno-form-end-bairro">Bairro</label>
+              <input type="text" id="aluno-form-end-bairro" value="Mooca">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-end-cidade">Cidade / UF</label>
+              <input type="text" id="aluno-form-end-cidade" value="São Paulo / SP">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-end-cep">CEP</label>
+              <input type="text" id="aluno-form-end-cep" placeholder="ex: 03104-001">
+            </div>
+          </div>
+
+          <div style="font-size: 13px; font-weight: bold; color: #1e3a8a; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 4px; margin-top: 14px; margin-bottom: 10px;">
+            🚪 Autorização de Saída Antecipada
+          </div>
+
+          <div class="form-grupo-campo">
+            <label for="aluno-form-autorizacao-saida">Pessoas expressamente autorizadas a buscar ou autorizar saída do aluno:</label>
+            <textarea id="aluno-form-autorizacao-saida" rows="2" placeholder="ex: 1) Alice Sousa Vieira (Mãe) - RG: 32.114.992-1 / 2) Marcos Antonio Vieira (Pai) - RG: 29.883.104-8"></textarea>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             ABA 3: EMERGÊNCIA E SAÚDE
+             ========================================== -->
+        <div class="painel-form-secao" id="painel-form-aluno-emergencia">
+          <div style="font-size: 13px; font-weight: bold; color: #b91c1c; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 10px;">
+            🚨 Contatos Rápidos de Emergência
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+            <div class="form-grupo-campo">
+              <label for="aluno-form-emergencia-1">Contato 1 (Prioritário) *</label>
+              <input type="text" id="aluno-form-emergencia-1" placeholder="ex: (11) 98765-4321 (Mãe)">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-emergencia-2">Contato 2 (Alternativo)</label>
+              <input type="text" id="aluno-form-emergencia-2" placeholder="ex: (11) 99123-4567 (Pai)">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-emergencia-3">Contato 3 (Empresa / RH)</label>
+              <input type="text" id="aluno-form-emergencia-3" placeholder="ex: (11) 3320-1000 (RH Empresa)">
+            </div>
+          </div>
+
+          <div style="font-size: 13px; font-weight: bold; color: #1e3a8a; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 4px; margin-top: 14px; margin-bottom: 10px;">
+            🩺 Dados Médicos e de Saúde
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: 10px;">
+            <div class="form-grupo-campo">
+              <label for="aluno-form-sangue">Tipo Sanguíneo & Rh</label>
+              <select id="aluno-form-sangue">
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="Não informado">Não informado</option>
+              </select>
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-convenio">Plano de Saúde / Convênio</label>
+              <input type="text" id="aluno-form-convenio" placeholder="ex: Amil Assistência Médica">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-hospital">Hospital / UPA de Preferência</label>
+              <input type="text" id="aluno-form-hospital" placeholder="ex: Hospital CEMA / São Cristóvão (Mooca)">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-grupo-campo">
+              <label for="aluno-form-alergias">Alergias Conhecidas</label>
+              <input type="text" id="aluno-form-alergias" placeholder="ex: Nenhuma alergia grave relatada">
+            </div>
+            <div class="form-grupo-campo">
+              <label for="aluno-form-medicamentos">Medicamentos de Uso Contínuo</label>
+              <input type="text" id="aluno-form-medicamentos" placeholder="ex: Nenhum">
+            </div>
+          </div>
+
+          <div class="form-grupo-campo">
+            <label for="aluno-form-obs-medicas">Observações Médicas / Restrições Físicas / Óculos / Próteses</label>
+            <textarea id="aluno-form-obs-medicas" rows="2" placeholder="ex: Óculos de grau para leitura nas aulas teóricas e práticas."></textarea>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             ABA 4: PERFIL E OBSERVAÇÕES
+             ========================================== -->
+        <div class="painel-form-secao" id="painel-form-aluno-pessoal">
+          <div style="font-size: 13px; font-weight: bold; color: #1e3a8a; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 10px;">
+            👤 Perfil Socioeducacional & Observações Pedagógicas
+          </div>
+
+          <div class="form-grupo-campo">
+            <label for="aluno-form-perfil-comp">Perfil Comportamental:</label>
+            <textarea id="aluno-form-perfil-comp" rows="2" placeholder="ex: Aluno sociável, colaborativo em grupo e atento às instruções técnicas."></textarea>
+          </div>
+
+          <div class="form-grupo-campo">
+            <label for="aluno-form-habilidades">Destaques Acadêmicos & Habilidades Práticas:</label>
+            <textarea id="aluno-form-habilidades" rows="2" placeholder="ex: Boa aptidão com ferramentas digitais, organização e raciocínio lógico."></textarea>
+          </div>
+
+          <div class="form-grupo-campo">
+            <label for="aluno-form-projetos">Projetos Institucionais & Atividades Extracurriculares:</label>
+            <textarea id="aluno-form-projetos" rows="2" placeholder="ex: Projeto Integrador SENAI Theobaldo De Nigris e oficinas tecnológicas."></textarea>
+          </div>
+
+          <div class="form-grupo-campo">
+            <label for="aluno-form-obs-coord">Observações da Coordenação / Orientação Educacional:</label>
+            <textarea id="aluno-form-obs-coord" rows="2" placeholder="ex: Acompanhamento pedagógico regular com bom rendimento."></textarea>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             RODAPÉ DO MODAL COM BOTÕES DE AÇÃO
+             ========================================== -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+          <div style="display: flex; gap: 6px;">
+            <button type="button" class="btn-senai-topo" onclick="AdminUsuarios.trocarAbaFormAlunoAnterior()">◀ Aba Anterior</button>
+            <button type="button" class="btn-senai-topo" onclick="AdminUsuarios.trocarAbaFormAlunoProxima()">Próxima Aba ▶</button>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn-senai-topo" onclick="AdminUsuarios.fecharModalNovoAluno()">Cancelar</button>
+            <button type="button" id="btn-salvar-aluno-submit" class="btn-senai-topo btn-master-destaque" onclick="AdminUsuarios.salvarNovoAluno()">💾 Cadastrar Aluno</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================
+       MODAL 7: ALTERAR FOTO DO ALUNO
+       ====================================================================== -->
+  <div class="modal-overlay" id="modal-alterar-foto">
+    <div class="modal-janela" style="max-width: 500px;">
+      <div class="admin-header">
+        <h2>📸 Alterar Foto do Aluno</h2>
+        <button class="btn-fechar-modal" onclick="AdminUsuarios.fecharModalAlterarFoto()">✕</button>
+      </div>
+      <div style="padding: 20px; background: #ffffff; text-align: center;">
+        <h3 id="alterar-foto-nome-aluno" style="font-size: 13px; margin-bottom: 12px; color: #0f172a;">-</h3>
+
+        <div style="display: flex; justify-content: center; margin-bottom: 14px;">
+          <div class="preview-foto-box" style="width: 120px; height: 150px;">
+            <img id="preview-alterar-foto" src="/assets/fotos/aluno_2.svg" alt="Pré-visualização">
+          </div>
+        </div>
+
+        <div class="form-grupo-campo" style="text-align: left;">
+          <label for="input-arquivo-troca-foto">Selecionar nova foto do computador:</label>
+          <input type="file" id="input-arquivo-troca-foto" class="input-arquivo-foto" accept="image/*" onchange="AdminUsuarios.carregarPreviewFoto(this, 'preview-alterar-foto')">
+          <span style="font-size: 11px; color: #64748b;">
+            A foto será salva e atualizada imediatamente no carômetro e na ficha do aluno.
+          </span>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+          <button type="button" class="btn-senai-topo" onclick="AdminUsuarios.fecharModalAlterarFoto()">Cancelar</button>
+          <button type="button" class="btn-senai-topo btn-master-destaque" onclick="AdminUsuarios.salvarAlterarFoto()">💾 Salvar Nova Foto</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Scripts da Aplicação -->
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/carometro.js"></script>
+  <script src="/js/modal-detalhes.js"></script>
+  <script src="/js/modal-ocorrencia.js"></script>
+  <script src="/js/impressao.js"></script>
+  <script src="/js/admin-usuarios.js"></script>
+  <script src="/js/main.js"></script>
+
+</body>
+</html>

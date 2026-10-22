@@ -1,0 +1,632 @@
+/* ==========================================================================
+   TEMA VISUAL OFICIAL - SENAI BARUERI "JOSÉ EPHIM MINDLIN"
+   Fiel às imagens de referência do Sistema de Acompanhamento Escolar
+   ========================================================================== */
+
+:root {
+  --senai-vermelho: #e11d48;
+  --senai-vermelho-escuro: #be123c;
+  --senai-azul-header: #1e5f8a;
+  --senai-azul-claro: #e8f4fc;
+  --senai-azul-borda: #b6d4e8;
+  --tab-ativa-bg: #5f6b78;
+  --tab-inativa-bg: #f8f9fa;
+  --badge-vermelho: #e52e2e;
+  --badge-verde: #16a34a;
+  --cinza-bg: #f4f6f8;
+  --cinza-borda: #ced4da;
+  --cinza-campo: #e9ecef;
+  --texto-principal: #212529;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  color: var(--texto-principal);
+  background-color: #ffffff;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Fundo da Escola SENAI Barueri (Watermark das fotos) */
+.fundo-escola-watermark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/assets/image.png');
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: cover;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container-sistema {
+  position: relative;
+  z-index: 1;
+  max-width: 1720px;
+  margin: 0 auto;
+  padding: 8px 16px 30px 16px;
+}
+
+/* --------------------------------------------------------------------------
+   BARRA SUPERIOR DE DEMO E PERFIS (Facilita testes imediatos)
+   -------------------------------------------------------------------------- */
+.barra-demo-topo {
+  background: #1e293b;
+  color: #f1f5f9;
+  padding: 6px 14px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.barra-demo-topo .demo-titulo {
+  font-weight: bold;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.barra-demo-topo .demo-seletor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.barra-demo-topo select {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid #475569;
+  background: #0f172a;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.barra-demo-topo .badge-perfil-atual {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 11px;
+}
+.perfil-master { background: #dc2626; color: white; }
+.perfil-coordenador { background: #7c3aed; color: white; }
+.perfil-professor { background: #2563eb; color: white; }
+
+/* --------------------------------------------------------------------------
+   CABEÇALHO OFICIAL (Idêntico ao das imagens de referência)
+   -------------------------------------------------------------------------- */
+.cabecalho-principal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #0284c7;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(240,249,255,0.85) 100%);
+  padding-top: 4px;
+}
+
+/* Logo SENAI Theobaldo De Nigris */
+.logo-senai-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 190px;
+}
+
+.logo-senai-box .senai-texto {
+  background-color: var(--senai-vermelho);
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 26px;
+  letter-spacing: -1px;
+  padding: 2px 14px;
+  border-radius: 2px;
+  line-height: 1;
+  display: inline-block;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+}
+
+.logo-senai-box .senai-cidade {
+  color: var(--senai-vermelho);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  padding-left: 2px;
+  margin-top: 3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Título em relevo 3D Acompanhamento Escolar */
+.titulo-sistema-3d {
+  font-size: 28px;
+  font-weight: 900;
+  color: #1a4f78;
+  text-align: center;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 0 #ccc,
+               0 2px 0 #c9c9c9,
+               0 3px 0 #bbb,
+               0 4px 1px rgba(0,0,0,.1),
+               0 0 5px rgba(0,0,0,.1),
+               0 1px 3px rgba(0,0,0,.3);
+}
+
+/* Área do usuário e ações no topo direito */
+.usuario-topo-acoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.usuario-topo-acoes .saudacao {
+  font-weight: normal;
+  color: #333;
+}
+
+.usuario-topo-acoes .saudacao strong {
+  color: #000;
+  text-transform: capitalize;
+}
+
+.btn-senai-topo {
+  font-size: 12px;
+  padding: 3px 10px;
+  border: 1px solid #71717a;
+  background: #f4f4f5;
+  color: #18181b;
+  border-radius: 3px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.btn-senai-topo:hover {
+  background: #e4e4e7;
+  border-color: #3f3f46;
+}
+
+.btn-master-destaque {
+  background: #dc2626;
+  color: white;
+  border-color: #b91c1c;
+  font-weight: bold;
+}
+.btn-master-destaque:hover {
+  background: #b91c1c;
+}
+
+/* --------------------------------------------------------------------------
+   SEÇÃO "CONSULTAR ALUNOS" E FILTROS (Fiel à imagem 1)
+   -------------------------------------------------------------------------- */
+.painel-consulta {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.painel-consulta .consulta-titulo {
+  font-size: 13px;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 2px;
+}
+
+.painel-consulta .consulta-instrucao {
+  font-size: 11px;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
+.linha-filtros {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.grupo-busca {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.grupo-busca input[type="text"] {
+  padding: 3px 8px;
+  font-size: 12px;
+  border: 1px solid #94a3b8;
+  border-radius: 2px;
+  width: 220px;
+}
+
+.grupo-busca select {
+  padding: 3px 6px;
+  font-size: 12px;
+  border: 1px solid #94a3b8;
+  border-radius: 2px;
+}
+
+.btn-pesquisar {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: #e2e8f0;
+  border: 1px solid #94a3b8;
+  border-radius: 2px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-pesquisar:hover {
+  background: #cbd5e1;
+}
+
+.chk-exclusivo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.info-encontrados {
+  font-size: 12px;
+  color: #1e293b;
+  margin-top: 4px;
+}
+.info-encontrados strong {
+  font-weight: bold;
+}
+
+.filtros-direita {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11px;
+  color: #334155;
+}
+
+.filtros-direita select {
+  font-size: 11px;
+  padding: 2px 6px;
+  border: 1px solid #94a3b8;
+  border-radius: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   BARRA DE ABAS DE TURMAS (Horizontal, com botões dinâmicos)
+   -------------------------------------------------------------------------- */
+.container-abas-turmas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #cbd5e1;
+  padding-bottom: 6px;
+}
+
+.btn-aba-turma {
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  padding: 4px 8px;
+  border: 1px solid #94a3b8;
+  background-color: #ffffff;
+  color: #1e293b;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-aba-turma:hover {
+  background-color: #f1f5f9;
+  border-color: #64748b;
+}
+
+/* Aba Selecionada / Ativa (Fiel à imagem 1 com fundo cinza escuro e texto branco) */
+.btn-aba-turma.ativa {
+  background-color: #64748b !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.btn-aba-turma.aba-todas {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+.btn-aba-turma.aba-todas.ativa {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+}
+
+.aviso-sem-turmas {
+  padding: 20px;
+  text-align: center;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   TELA INICIAL DE LOGIN OFICIAL - SENAI THEOBALDO DE NIGRIS
+   ========================================================================== */
+.tela-login-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  background: #000000 !important; /* Fundo preto sólido solicitado pelo usuário */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.tela-login-wrapper::before {
+  display: none !important; /* Sem imagens ou marcas d'água no fundo de login */
+}
+
+.card-login-senai {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px #222222;
+  border-top: 5px solid var(--senai-vermelho);
+  padding: 28px 24px;
+  animation: loginFadeIn 0.25s ease-out;
+}
+
+@keyframes loginFadeIn {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-topo-marca {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-titulo-sistema {
+  font-size: 16px;
+  font-weight: bold;
+  color: #0f172a;
+  margin-top: 6px;
+  line-height: 1.3;
+}
+
+.login-subtitulo-unidade {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.login-alerta-erro {
+  background: #fee2e2;
+  border: 1px solid #f87171;
+  color: #991b1b;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   INPUT GROUP COM ÍCONE À ESQUERDA FORA DO CAMPO DIGITÁVEL
+   -------------------------------------------------------------------------- */
+.input-grupo-com-icone {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-icone-esquerda {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  background-color: #f1f5f9;
+  border: 1.5px solid #cbd5e1;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+  color: #475569;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.input-campo-envolucro {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.input-campo-envolucro input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 0 4px 4px 0;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  background-color: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.input-campo-envolucro input:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+  z-index: 2;
+}
+
+.input-grupo-com-icone:focus-within .input-icone-esquerda {
+  border-color: #0284c7;
+  background-color: #e0f2fe;
+}
+
+.input-campo-envolucro.com-toggle input {
+  padding-right: 38px;
+}
+
+.btn-toggle-senha {
+  position: absolute;
+  right: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #64748b;
+  padding: 4px;
+  z-index: 3;
+}
+
+.btn-toggle-senha:hover {
+  color: #0f172a;
+}
+
+.btn-login-submit {
+  width: 100%;
+  background: linear-gradient(180deg, #e11d48 0%, #be123c 100%);
+  color: #ffffff;
+  border: none;
+  padding: 11px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(225, 29, 72, 0.3);
+  transition: all 0.15s ease;
+}
+
+.btn-login-submit:hover {
+  background: linear-gradient(180deg, #be123c 0%, #9f1239 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(225, 29, 72, 0.4);
+}
+
+.btn-login-submit:active {
+  transform: translateY(0);
+}
+
+.login-divisor {
+  text-align: center;
+  position: relative;
+  margin: 18px 0 12px 0;
+}
+
+.login-divisor::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background: #e2e8f0;
+}
+
+.login-divisor span {
+  position: relative;
+  background: #ffffff;
+  padding: 0 10px;
+  font-size: 10px;
+  font-weight: bold;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.grade-perfis-demo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.card-demo-opcao {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 8px 10px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.card-demo-opcao:hover {
+  background: #e0f2fe;
+  border-color: #38bdf8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.card-demo-opcao .demo-avatar {
+  font-size: 20px;
+}
+
+.card-demo-opcao .demo-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-demo-opcao .demo-info strong {
+  font-size: 11px;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.card-demo-opcao .demo-info span {
+  font-size: 9.5px;
+  color: #64748b;
+}
+
+.login-rodape {
+  text-align: center;
+  font-size: 10.5px;
+  color: #94a3b8;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 10px;
+  margin-top: 4px;
+}
